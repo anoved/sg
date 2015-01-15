@@ -35,7 +35,7 @@
 	  }
 ***/
 (function() {
-	var SG = window['SG'] = function(data, svgEl, settings) {
+	var SG = window.SG = function(data, svgEl, settings) {
 		var sg = {
 			'data':data,
 			'el':svgEl,
@@ -44,7 +44,7 @@
 		init(sg);
 		//clear anything that might get in the way
 		//layer another element w/ opaque background if you need to preserve
-		if(svgEl != undefined) {
+		if(svgEl !== undefined) {
 			while (svgEl.lastChild) {
 				svgEl.removeChild(svgEl.lastChild);
 			}
@@ -59,7 +59,7 @@
 		return this;
 		
 		function setSettings(sg, settings) {
-			if (settings==undefined || settings.length < 1) {
+			if (settings === undefined || settings.length < 1) {
 				settings = defaultSettings();
 			}
 			//todo move non-calc'd items to CSS?
@@ -177,10 +177,10 @@
 				for (var i = 1; i < sg.msort.length; i++) {
 					//find the minimum delta between vals
 					var diff = Math.abs(sg.msort[i].val - sg.msort[i-1].val);
-					if (diff != 0 && (isNaN(sg.mind) || diff < sg.mind)) {
+					if (diff !== 0 && (isNaN(sg.mind) || diff < sg.mind)) {
 						sg.mind = diff;
 					}
-					if (diff != 0 && (isNaN(sg.maxd) || diff > sg.maxd)) {
+					if (diff !== 0 && (isNaN(sg.maxd) || diff > sg.maxd)) {
 						sg.maxd = diff;
 					}
 				}
@@ -220,7 +220,8 @@
 				sg.sorted[0].s = 1;
 				var unqid = [sg.sorted[0].id]; 
 				var unqval = [sg.sorted[0].val];
-				var unqr = unqidr = 1; // unique rows
+				var unqidr = 1;
+				var unqr = unqidr; // unique rows
 				var dupval = [];
 				var dupr = 0;
 				for (var i = 1; i < sg.sorted.length; i++) {
@@ -253,10 +254,10 @@
 		}
 		
 		//show row lines & units for debugging positioning
-		function drawGrid(el, start, r, h, w, min, d, x, y, useLog) {
+		function drawGrid(el, start, r, h, w, min, d, x, y_offset, useLog) {
 			var maxi = h/r - 1;
 			for(var i = 1; i < maxi; i++) {
-				var y = start + i * r;
+				var y = start + i * r; // todo inspect whether intended to stomp param y (renamed y_off)
 				newEl(el,'line','x1',x,'x2',w,'y1',y, 'y2', y, 'stroke', '#bbb','stroke-width','.5');
 				var t = newEl(el,'text','x',x,'y',y, 'fill','#bbb');
 				t.textContent = i;
@@ -318,7 +319,7 @@
 				if (!isNaN(lastval)) {
 					//todo dup checking currently misses dup adjustments on last 2 rows in dataset!!
 					if (lastval == d.val) {
-						if(dupcnt++ == 0) {
+						if(dupcnt++ === 0) {
 							dupcnt++;
 							predupy = y;
 						}
@@ -335,7 +336,7 @@
 							var upto = thisset.length-dupcnt;
 							var step = function(v) {
 								return v-1;
-							}
+							};
 							for (var i = startat; i >= upto; i = step(i)) {
 								thisset[i].y -= diff;
 								at(thisset[i].el, 'y', thisset[i].y);
@@ -384,17 +385,18 @@
 						'id', s, 'y', y, 'x', x,
 						'font-family', sg.font, 'font-size', sg.fontSize, 'fill', sg.fontColor);
 				
-				function formatVal(val, places) {
+				var formatVal = function(val, places) {
 					if(isNaN(places) || places <= 0) {
 						return parseInt(val);
 					} else {
 					  return parseFloat(val).toFixed(places);
 					}
-				}
+				};
+				
 				var val = formatVal(sg.rowCurve == 'log' ? Math.log(d.val) : d.val, sg.decimals);
 				
 				//todo separate id & val into separate els for better alignment
-				if (setcnt == 0) {
+				if (setcnt === 0) {
 					// align right, id before val
 					el.textContent = d.id + ' ' + val;
 				} else if (setcnt == sg.setc - 1 || s == sg.sorted.length - 1) {
@@ -441,8 +443,8 @@
 		}
 		
 		function fitPriorRows(thisset, startat, rowh, oy, checkAll) {
-			while (startat > 0 && (checkAll || thisset[startat].y >= oy+rowh)
-					&& thisset[startat].y - thisset[startat-1].y < rowh) {
+			while (startat > 0 && (checkAll || thisset[startat].y >= oy+rowh) &&
+					thisset[startat].y - thisset[startat-1].y < rowh) {
 				thisset[startat-1].y = thisset[startat].y - rowh;
 				startat--;
 				at(thisset[startat].el, 'y', thisset[startat].y);
@@ -516,7 +518,7 @@
 			if(isNaN(el.style.width) || el.style.width <= sx) {
 				el.style.width = (sx + 5) + "px";
 			}
-			return 
+			return;
 		}
 		
 		function repassGraphSet(curr, last, maxtw, width, height, gutter, strokeWidth) {
@@ -579,7 +581,7 @@
 		}
 		
 		function isEmpty(text) {
-			return text == undefined || text.toString().length < 1;
+			return text === undefined || text.toString().length < 1;
 		}
 		
 		function docBox(parent, doc, svgWidth, offsetX, offsetY, y, rowHeight, font, fontSize, fontColor) {
@@ -588,9 +590,10 @@
 				return;
 			}
 			
+			var docel;
+			
 			if (offsetX > 0) {
 				var docw = offsetX - 10; //todo parameterize outer border or just use padding in style?
-				var docel;
 				var doclines = doc.split('\n');
 				var docy = y + rowHeight;
 				for (var i = 0; i < doclines.length; i++) {
@@ -610,7 +613,7 @@
 				// todo draw above set headers when offsetY > 0
 				// no faux text-wrapping here
 				var doch = offsetY; // todo param outer pad
-				var docel = newEl(parent,'text','x',10,'y', rowHeight,'height',doch,'font-family',font,'font-size',fontSize, 'fill', fontColor);
+				docel = newEl(parent,'text','x',10,'y', rowHeight,'height',doch,'font-family',font,'font-size',fontSize, 'fill', fontColor);
 				docel.textContent = doc;
 				at(docel,'x',centerText(docel,svgWidth,10));
 			}
@@ -624,14 +627,14 @@
 				at(tel,'text-decoration', 'underline');
 			}
 		}
-	}
+	};
 	
 	SG.clone = function(d) {
 		var r = [];
-		for (i in d) {
+		for (var i in d) {
 			r[i] = d[i];
 		}
 		return r;
-	}
+	};
 	
 })();
