@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <!--link href='http://fonts.googleapis.com/css?family=Cabin' rel='stylesheet' type='text/css'-->
+    <title>SG.js - Slopegraphs for the web</title>
+    <script type="text/javascript" src="sg.js">
+    </script>
+    <script>
+      var freeze = [{'id':'Samuel Williams', 'set':1, 'val':2009},
+					{'id':'Jack Hillenbrand', 'set':1, 'val':2071},
+					{'id':'Dan Schaffer', 'set':1, 'val':2112},
+					{'id':'Stephen Marcin', 'set':1, 'val':2122},
+					{'id':'Steve Esposito', 'set':1, 'val':2130},
+					{'id':'Jordan Varano', 'set':1, 'val':2133},
+					{'id':'Shaun Horan', 'set':1, 'val':2229},
+					{'id':'Christopher Cowden', 'set':1, 'val':2263},
+					{'id':'Steven Cammisa', 'set':1, 'val':2268},
+					{'id':'Michael Murphy', 'set':1, 'val':2276},
+					{'id':'Adrian Milisavljevich', 'set':1, 'val':2278},
+					{'id':'Eric Symons', 'set':1, 'val':2298},
+					{'id':'Scott Hornung', 'set':1, 'val':2426},
+					{'id':'Harry Back', 'set':1, 'val':2436},
+					{'id':'Jamie Hoyt', 'set':1, 'val':2458},
+					{'id':'Corey Dubois', 'set':1, 'val':2473},
+					{'id':'Doug Stoner', 'set':1, 'val':2482},
+					{'id':'Eric J. Maki', 'set':1, 'val':2520},
+					{'id':'Mike Browngardt', 'set':1, 'val':2553},
+					{'id':'Ted Larison', 'set':1, 'val':2564},
+					{'id':'Jim Devona', 'set':1, 'val':2591},
+					{'id':'Tim Oneill', 'set':1, 'val':2595},
+					{'id':'Emily Piza-Taylor', 'set':1, 'val':2598},
+					{'id':'Fred Malloy', 'set':1, 'val':2607},
+					{'id':'Todd Votapka', 'set':1, 'val':2632},
+					
+					{'id':'Jack Hillenbrand', 'set':2, 'val':2102},
+					{'id':'Nick Montesano', 'set':2, 'val':2138},
+					{'id':'Steve Esposito', 'set':2, 'val':2185},
+					{'id':'Michael Murphy', 'set':2, 'val':2370},
+					{'id':'Aaron Perry', 'set':2, 'val':2379},
+					{'id':'Steven Cammisa', 'set':2, 'val':2390},
+					{'id':'Eric J. Maki', 'set':2, 'val':2440},
+					{'id':'Harry Back', 'set':2, 'val':2453},
+					{'id':'Scott Hornung', 'set':2, 'val':2461},
+					{'id':'Thomas Mullins', 'set':2, 'val':2466},
+					{'id':'Jim Devona', 'set':2, 'val':2566},
+					{'id':'Emily Piza-Taylor', 'set':2, 'val':2585},
+					{'id':'Todd Votapka', 'set':2, 'val':2586},
+					{'id':'Tim Oneill', 'set':2, 'val':2593},
+					{'id':'Doug Stoner', 'set':2, 'val':2629},
+					{'id':'Casondra Hamilton', 'set':2, 'val':2660},
+					{'id':'Michael Lake', 'set':2, 'val':2737},
+					{'id':'Tom Feheley', 'set':2, 'val':2741},
+					{'id':'Irene Cobb', 'set':2, 'val':2762},
+					{'id':'Ron Huslander', 'set':2, 'val':2787},
+					{'id':'Bret Jaspers', 'set':2, 'val':2799},
+					{'id':'Jason Palmer', 'set':2, 'val':2802},
+					{'id':'Michael Thompson', 'set':2, 'val':2834}];
+    </script>
+    <style>
+      @import url(http://fonts.googleapis.com/css?family=Cabin:500);
+      @import url(http://fonts.googleapis.com/css?family=Vollkorn:400,400italic);
+      
+      h1, div {
+        font-family:Vollkorn,serif;
+      }
+      div {
+        font-size:14pt;
+        margin:10px;
+        //font-style:italic;
+      }
+      .sub {
+        font-size:12pt;
+        font-style:italic;
+        font-weight:lighter;
+        max-width:640px;
+      }
+      .huge {
+        font-size:3em;
+        margin:1em;
+        font-weight:bold;
+      }
+      .center {
+        text-align:center;
+      }
+      svg {
+      }
+    </style>    
+  </head>
+  <body style=";background-color:#eee">
+    <div class=center>
+      <svg id="freeze" style="background-color:#eef; width:650px" height=1005></svg>
+        <script>
+          SG(freeze, document.getElementById('freeze'), 
+            { 'fontSize':11, 
+              'fontFamily':'Cabin,Helvetica,Arial,sans-serif',
+              'slopeWidth':180, 
+              'gutterWidth':6,
+              'lineSize':1, 
+              'lineOpacity':0.3,
+              'lineColor':'#234', 
+              'fontColor':'#234',
+              'waitFont':'Cabin,"Courier New"',
+             // 'resize':true,
+              'height':900,
+              'textWidth':100,
+              'sortVals':'up',
+              'decimals':0,
+              'offsetX':100
+           });
+        </script>
+      </div>
+    </div>
+    </body>
+</html>
