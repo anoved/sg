@@ -1,0 +1,22 @@
+<!--
+	Web interface.
+	Loads lib.js (and any prerequisite canned libraries).
+	Calls lib's main function; gets input from page and inserts results in page.
+-->
+<html>
+	<head>
+		<title>JS Test</title>
+		<script src="lib.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			function go() {
+				var svg = makeSVG();
+				console.log(svg);
+				document.getElementById('drawing').innerHTML = svg;
+			};
+		</script>
+	</head>
+	<body onload="go();">
+		<div id="drawing">
+		</div>
+	</body>
+</html>	
