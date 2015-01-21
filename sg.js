@@ -52,6 +52,7 @@
 			if (sg.waitFont) {
 				graphWithFonts(sg.font, sg.waitFont);
 			} else {
+				console.log("calling graph() directly");
 				graph(sg);
 			}
 		}
@@ -163,6 +164,7 @@
 					};
 				}
 			})();
+			
 			// msort is an all in one big val-sorted list (for bounds checking)
 			msort(sg);
 			function msort(sg) {
@@ -295,10 +297,15 @@
 			var predupy = y;
 			var dupoff = 0;
 			
+			// docBox is a little inset box with documentation.
+			// part of Tufte's requirement, but irrelevant to us.
+			// Not an issue with how to return raw svg.
 			docBox(sg.el, sg.doc, sg.width, sg.offsetX, sg.offsetY, y, sg.rowh+4, sg.font, sg.fontSize+4, sg.fontColor);
 			
 			for (var s = 0; s < sg.sorted.length; s++) {
 				var d = sg.sorted[s];
+				
+				// start a new graphic group whenever we encounter results from a new set (race)
 				if (isNaN(set) || d.set > set) {
 					//new set, new column, new g
 					if(!isNaN(set)) {
@@ -316,6 +323,8 @@
 					g = newEl(sg.el, 'g');
 				}
 				
+				// check for duplicate values (or close calls?)
+				// to flag rows that need to be adjusted up or down for clean display
 				if (!isNaN(lastval)) {
 					//todo dup checking currently misses dup adjustments on last 2 rows in dataset!!
 					if (lastval == d.val) {
@@ -380,37 +389,45 @@
 				
 				lastval = d.val;
 				
-				//todo val & id get their own text el
-				el = newEl(g, 'text', 
-						'id', s, 'y', y, 'x', x,
-						'font-family', sg.font, 'font-size', sg.fontSize, 'fill', sg.fontColor);
+				/* start label */
 				
-				var formatVal = function(val, places) {
-					if(isNaN(places) || places <= 0) {
-						return parseInt(val);
+					//todo val & id get their own text el
+					el = newEl(g, 'text', 
+							'id', s, 'y', y, 'x', x,
+							'font-family', sg.font, 'font-size', sg.fontSize, 'fill', sg.fontColor);
+					
+					var formatVal = function(val, places) {
+						if(isNaN(places) || places <= 0) {
+							return parseInt(val);
+						} else {
+						  return parseFloat(val).toFixed(places);
+						}
+					};
+					
+					var val = formatVal(sg.rowCurve == 'log' ? Math.log(d.val) : d.val, sg.decimals);
+					
+					//todo separate id & val into separate els for better alignment
+					if (setcnt === 0) {
+						// align right, id before val
+						el.textContent = d.id + ' ' + val;
+					} else if (setcnt == sg.setc - 1 || s == sg.sorted.length - 1) {
+						//align left, val before id
+						el.textContent = '' + val + ' ' + d.id;
 					} else {
-					  return parseFloat(val).toFixed(places);
+						el.textContent = val;
 					}
-				};
+					var tw = el.getComputedTextLength();
+					if (maxtw < tw) {
+						maxtw = tw;
+					}
+					
+				/* end label */
 				
-				var val = formatVal(sg.rowCurve == 'log' ? Math.log(d.val) : d.val, sg.decimals);
-				
-				//todo separate id & val into separate els for better alignment
-				if (setcnt === 0) {
-					// align right, id before val
-					el.textContent = d.id + ' ' + val;
-				} else if (setcnt == sg.setc - 1 || s == sg.sorted.length - 1) {
-					//align left, val before id
-					el.textContent = '' + val + ' ' + d.id;
-				} else {
-					el.textContent = val;
-				}
-				var tw = el.getComputedTextLength();
-				if (maxtw < tw) {
-					maxtw = tw;
-				}
-				
+				// update array of results just in this column
 				thisset.push({'id':d.id, 'set':d.set, 'val':d.val, 'x':x, 'y':y, 's':s, 'tw':tw, 'setcnt': setcnt, 'el': el});
+				
+				// on last record in dataset OR last record in race set (before changing to next)
+				// (basically, performed after each result column:)
 				
 				if (s == sg.sorted.length - 1 || sg.sorted[s+1].set != set) {
 					//end of row, set header and do repass for text fitting & lines
@@ -521,12 +538,19 @@
 			return;
 		}
 		
+		// called on completion of a column of results
+		// curr and last are arrays of results from
 		function repassGraphSet(curr, last, maxtw, width, height, gutter, strokeWidth) {
+			
+			// look at every result in this column...
 			for(var c = 0; c < curr.length; c++) {
 				fixTextWidth.call(this,curr[c]);
 				
+				// if there was a prior row and/or if it had any contents,
+				// look at each result int he prior row...
 				if (last && last.length > 0) {
 					for(var l = 0; l < last.length; l++) {
+						// if they have matching ids, connect with a line
 						if(curr[c].id == last[l].id) {
 							var line = newEl(this.el, 'line', 'x1', last[l].x + width + gutter,
 							'x2', curr[c].x - gutter, 'y1', last[l].y - height/4, 
@@ -586,12 +610,17 @@
 		
 		function docBox(parent, doc, svgWidth, offsetX, offsetY, y, rowHeight, font, fontSize, fontColor) {
 			
+			//console.log(doc);
+			// we arrive with doc empty, and simply return.
+			// so, docBox returns an undefined
+			// (unless settings.doc = ?something?)
+			
 			if (isEmpty(doc)) {
 				return;
 			}
 			
 			var docel;
-			
+						
 			if (offsetX > 0) {
 				var docw = offsetX - 10; //todo parameterize outer border or just use padding in style?
 				var doclines = doc.split('\n');
